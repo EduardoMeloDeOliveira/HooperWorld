@@ -1,10 +1,10 @@
 package hoop.api.api.domain.question.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import hoop.api.api.domain.quiz.entity.Quiz;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,4 +17,9 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    private String questionContent;
+
+    @ManyToOne
+    private Quiz quiz;
 }

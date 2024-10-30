@@ -1,8 +1,11 @@
 package hoop.api.api.domain.quiz.mapper;
 
+import hoop.api.api.domain.question.mapper.QuestionMapper;
 import hoop.api.api.domain.quiz.DTO.QuizReponseDTO;
 import hoop.api.api.domain.quiz.DTO.QuizRequestDTO;
 import hoop.api.api.domain.quiz.entity.Quiz;
+
+import java.util.stream.Collectors;
 
 public class QuizMapper {
 
@@ -12,6 +15,7 @@ public class QuizMapper {
                 .quizId(quiz.getId())
                 .quizTitle(quiz.getQuizTitle())
                 .quizDescription(quiz.getQuizDescription())
+                .questions(quiz.getQuestions().stream().map(q-> QuestionMapper.toDTO(q)).collect(Collectors.toList()))
                 .build();
     }
 

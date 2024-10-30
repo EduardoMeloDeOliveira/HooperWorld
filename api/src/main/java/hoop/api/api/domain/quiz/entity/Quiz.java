@@ -1,10 +1,11 @@
 package hoop.api.api.domain.quiz.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import hoop.api.api.domain.question.entity.Question;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,11 +17,12 @@ public class Quiz {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    String quizTitle;
+    private String quizTitle;
 
-    String quizDescription;
+    private String quizDescription;
 
-    //TODO implementar a lista de questions e toda a relação de entidades
+    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
+    List<Question> questions = new ArrayList<>();
 }
