@@ -27,4 +27,12 @@ public class QuestionController {
 
         return ResponseEntity.ok(responseDto);
     }
+
+    @PutMapping("/{questionId}")
+    public ResponseEntity<QuestionResponseDTO> updateQuestion
+            (@PathVariable Long questionId,
+             @RequestBody @Valid QuestionRequestDTO requestDTO) {
+        QuestionResponseDTO responseDto = questionService.updateQuestion(questionId, requestDTO);
+        return ResponseEntity.ok(responseDto);
+    }
 }
