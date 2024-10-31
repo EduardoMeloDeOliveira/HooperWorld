@@ -1,6 +1,7 @@
 package hoop.api.api.handler;
 
 
+import hoop.api.api.handler.exceptions.ConflitException;
 import hoop.api.api.handler.exceptions.ObjectNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -23,6 +24,12 @@ public class GlobalHandlerExceptions {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<String> httpMessageNotReadableException(HttpMessageNotReadableException ex) {
         return ResponseEntity.status(400).body("é esperado que todos os campos estejam preenchidos");
+    }
+
+
+    @ExceptionHandler(ConflitException.class)
+    public ResponseEntity<String> conflitException(ConflitException ex) {
+        return ResponseEntity.status(409).body(ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

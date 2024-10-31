@@ -7,6 +7,7 @@ import hoop.api.api.domain.answer.mapper.AnswerMapper;
 import hoop.api.api.domain.answer.repository.AnswerRepository;
 import hoop.api.api.domain.question.entity.Question;
 import hoop.api.api.domain.question.service.QuestionService;
+import hoop.api.api.handler.exceptions.ConflitException;
 import hoop.api.api.handler.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ public class AnswerService {
         Question question = questionService.existsById(questionId);
         Answer answer = AnswerMapper.toEntity(requestDTO);
 
+        if(question.getAnswers().size() == 4){
+            throw new ConflitException("cada questão só pode ter 4 respostas");
+        }
         answer.setQuestion(question);
 
         answerRepository.save(answer);
