@@ -1,7 +1,11 @@
 package hoop.api.api.domain.user.entity;
 
+import hoop.api.api.domain.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -21,4 +25,7 @@ public class User {
     private String email;
 
     private String password;
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private List<Post> posts = new ArrayList<>();
 }
