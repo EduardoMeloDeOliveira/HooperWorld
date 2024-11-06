@@ -1,9 +1,13 @@
 package hoop.api.api.domain.post.entity;
 
 
+import hoop.api.api.domain.like.entity.Like;
 import hoop.api.api.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,5 +26,8 @@ public class Post {
 
     @ManyToOne
     private User user;
+
+    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
+    private List<Like> likes = new ArrayList<>();
 
 }
