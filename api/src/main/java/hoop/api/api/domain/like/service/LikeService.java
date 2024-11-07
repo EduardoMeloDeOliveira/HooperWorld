@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class LikeService {
@@ -49,13 +48,18 @@ public class LikeService {
 
 
 
-    public void dettachLikeToPost(Long userId, Long postId) {
-        User user = userService.existsUserById(userId);
-        Post post = postService.existsPost(postId);
 
-        Like like = likeRepository.findByUserAndPost(user, post)
-                .orElseThrow(() -> new ConflitException("Like not found for this user and post"));
+    public void dettachLikeToPost(Long userId, Long likeId) {
+
+        User user = userService.existsUserById(userId);
+        Like like = likeRepository.findById(likeId).orElseThrow(()-> new ConflitException("Like not found"));
+
+        if(!user.getId().equals(like.getUser().getId())) {
+
+            throw new ConflitException("Like not detached");
+        }
 
         likeRepository.delete(like);
+
     }
 }

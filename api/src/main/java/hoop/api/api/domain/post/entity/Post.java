@@ -30,4 +30,9 @@ public class Post {
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>();
 
+
+    public List<Like>getLikes() {
+        return this.likes == null ? new ArrayList<>() : this.likes;
+    }
+
 }
