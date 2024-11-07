@@ -34,4 +34,11 @@ public class User {
     private  List<Like> likes = new ArrayList<>();
 
 
+    public List<Post>getPosts() {
+        return posts == null ? new ArrayList<>() : posts;
+    }
+
+    public List<Like> getLikes() {
+        return likes == null ? new ArrayList<>() : likes;
+    }
 }
