@@ -81,6 +81,17 @@ public class PostService {
         return postResponseDTOS;
     }
 
+
+    public PostResponseDTO getPostByPostId(Long postId){
+
+        Post post = postRepository
+                .findById(postId)
+                .orElseThrow(() -> new ObjectNotFoundException("Post not found"));
+
+        return PostMapper.toDto(post);
+
+    }
+
     public Post existsPost(Long postId) {
         return postRepository
                 .findById(postId)

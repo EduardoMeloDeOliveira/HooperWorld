@@ -76,4 +76,13 @@ public class PostController {
 
         return ResponseEntity.ok(posts);
     }
+
+
+    @Operation(summary = "Obter post por ID", description = "Retorna os detalhes de um post específico pelo seu ID.")
+    @ApiResponse(responseCode = "200", description = "Post encontrado com sucesso")
+    @ApiResponse(responseCode = "404", description = "Post não encontrado")
+    @GetMapping("/get-by-post-id/{postId}")
+    public ResponseEntity<PostResponseDTO> getPostById(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getPostByPostId(postId));
+    }
 }
