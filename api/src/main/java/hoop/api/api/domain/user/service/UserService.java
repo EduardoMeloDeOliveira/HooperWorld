@@ -1,14 +1,16 @@
 package hoop.api.api.domain.user.service;
 
 
-import hoop.api.api.domain.user.DTO.UserChangePasswordRequestDTO;
-import hoop.api.api.domain.user.DTO.UserRequestDTO;
+import hoop.api.api.domain.user.DTO.UserRegisterRequestDTO;
 import hoop.api.api.domain.user.DTO.UserResponseDTO;
 import hoop.api.api.domain.user.entity.User;
+import hoop.api.api.domain.user.enums.Roles;
 import hoop.api.api.domain.user.mapper.UserMapper;
 import hoop.api.api.domain.user.repository.UserRepository;
+import hoop.api.api.handler.exceptions.ConflitException;
 import hoop.api.api.handler.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,14 +20,23 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public UserResponseDTO createUser(UserRequestDTO requestDTO){
+
+    public UserResponseDTO register(UserRegisterRequestDTO requestDTO){
+
+        User possibleUser = (User) userRepository.findByEmail(requestDTO.email()).orElse(null);
+
+        if(possibleUser != null){
+            throw new ConflitException("User already exists");
+        }
 
         User user = UserMapper.toEntity(requestDTO);
+        user.setRole(Roles.USER);
+        user.setPassword(passwordEncoder.encode(requestDTO.password()));
 
-        userRepository.save(user);
-
-        return UserMapper.toDto(user);
+        return UserMapper.toDto(userRepository.save(user));
 
     }
 
@@ -34,17 +45,6 @@ public class UserService {
                 toDto(userRepository
                         .findById(id)
                         .orElseThrow(()-> new ObjectNotFoundException("User não encontrado")));
-    }
-
-    public UserResponseDTO userChangePassword(Long id, UserChangePasswordRequestDTO requestDTO){
-        User user = userRepository
-                .findById(id)
-                .orElseThrow(()-> new ObjectNotFoundException("User não econtrado"));
-
-
-        user.setPassword(requestDTO.password());
-        userRepository.save(user);
-        return UserMapper.toDto(user);
     }
 
 

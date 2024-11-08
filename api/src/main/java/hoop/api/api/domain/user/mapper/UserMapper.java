@@ -1,13 +1,13 @@
 package hoop.api.api.domain.user.mapper;
 
-import hoop.api.api.domain.user.DTO.UserRequestDTO;
+import hoop.api.api.domain.user.DTO.UserRegisterRequestDTO;
 import hoop.api.api.domain.user.DTO.UserResponseDTO;
 import hoop.api.api.domain.user.entity.User;
 
 public class UserMapper {
 
 
-    public static User toEntity(UserRequestDTO requestDTO){
+    public static User toEntity(UserRegisterRequestDTO requestDTO){
 
         return User.builder()
                 .id(null)
