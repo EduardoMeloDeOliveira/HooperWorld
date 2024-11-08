@@ -24,5 +24,9 @@ public class Quiz {
     private String quizDescription;
 
     @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
-    List<Question> questions = new ArrayList<>();
+    private List<Question> questions;
+
+    public List<Question> getQuestions() {
+     return questions == null ? new ArrayList<>() : questions;
+    }
 }

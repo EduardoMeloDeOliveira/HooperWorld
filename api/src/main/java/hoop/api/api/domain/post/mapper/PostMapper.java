@@ -1,5 +1,6 @@
 package hoop.api.api.domain.post.mapper;
 
+import hoop.api.api.domain.comment.mapper.CommentMapper;
 import hoop.api.api.domain.like.mapper.LikeMapper;
 import hoop.api.api.domain.post.DTO.PostRequestDTO;
 import hoop.api.api.domain.post.DTO.PostResponseDTO;
@@ -25,6 +26,7 @@ public class PostMapper {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .likes(post.getLikes().stream().map(p -> LikeMapper.toDto(p)).collect(Collectors.toList()))
+                .comments(post.getComments().stream().map(c -> CommentMapper.toDTO(c)).collect(Collectors.toList()))
                 .build();
     }
 }

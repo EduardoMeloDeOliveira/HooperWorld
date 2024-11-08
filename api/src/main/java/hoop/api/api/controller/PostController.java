@@ -2,7 +2,6 @@ package hoop.api.api.controller;
 
 import hoop.api.api.domain.post.DTO.PostRequestDTO;
 import hoop.api.api.domain.post.DTO.PostResponseDTO;
-import hoop.api.api.domain.post.entity.Post;
 import hoop.api.api.domain.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

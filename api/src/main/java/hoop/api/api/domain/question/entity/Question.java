@@ -18,13 +18,18 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     private String questionContent;
 
     @ManyToOne
     private Quiz quiz;
 
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "question")
-    List<Answer> answers = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    private List<Answer> answers;
+
+
+    public List<Answer> getAnswers() {
+        return answers == null ? new ArrayList<>() : answers;
+    }
 }

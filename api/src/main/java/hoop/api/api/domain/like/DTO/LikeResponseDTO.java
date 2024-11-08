@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record LikeResponseDTO(
 
         Long likeId,
-        LocalDateTime likedAt,
-        String likedBy
+        String likedBy,
+        LocalDateTime likedAt
 ) {
 }

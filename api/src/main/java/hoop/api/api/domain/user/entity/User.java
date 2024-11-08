@@ -1,5 +1,6 @@
 package hoop.api.api.domain.user.entity;
 
+import hoop.api.api.domain.comment.entity.Comment;
 import hoop.api.api.domain.like.entity.Like;
 import hoop.api.api.domain.post.entity.Post;
 import jakarta.persistence.*;
@@ -28,10 +29,13 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
-    private List<Post> posts = new ArrayList<>();
+    private List<Post> posts;
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
-    private  List<Like> likes = new ArrayList<>();
+    private  List<Like> likes;
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private  List<Comment> comments;
 
 
     public List<Post>getPosts() {
@@ -40,5 +44,9 @@ public class User {
 
     public List<Like> getLikes() {
         return likes == null ? new ArrayList<>() : likes;
+    }
+
+    public List<Comment> getComments() {
+     return comments == null ? new ArrayList<>() : comments;
     }
 }
