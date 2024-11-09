@@ -30,7 +30,7 @@ function Login({ toggleAuthForm }) {
   };
 
   return (
-    <div className="container mt-5 w-75 mx-auto d-flex flex-column justify-content-between">
+    <div className="container mt-5 w-100 mx-auto d-flex flex-column justify-content-between">
       <h2 className="text-center mb-4">Login</h2>
       <form onSubmit={handleSubmit} className="p-4 border rounded shadow-sm">
         <div className="mb-3">

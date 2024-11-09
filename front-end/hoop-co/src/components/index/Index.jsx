@@ -20,7 +20,7 @@ function Index() {
   return (
     <>
     <Header/>
-      <div className="container mt-5 d-flex flex-column">
+      <div className="container mt-5 d-flex flex-column w-75">
         <div className="row ">
 
           {/* Banner */}
