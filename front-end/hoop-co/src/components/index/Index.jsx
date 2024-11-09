@@ -3,6 +3,7 @@ import TypingEffect from 'react-typing-effect';
 import Header from '../header/Header';
 import Login from "../login/Login";
 import Register from "../register/Register";
+import Footer from '../footer/Footer';
 
 function Index() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -18,30 +19,30 @@ function Index() {
 
   return (
     <>
-      <Header />
+    <Header/>
       <div className="container mt-5 d-flex flex-column">
         <div className="row ">
 
           {/* Banner */}
           <div className="col-md-6 d-flex justify-content-center align-items-center p-4 text-white rounded-start shadow-lg text-center bg-dark flex-column" style={{ minHeight: '60vh' }}>
             <h1 className="display-1">
-              <TypingEffect 
-                text={["Hoop.co"]} 
-                speed={120} 
-                eraseDelay={1500} 
-                typingDelay={500} 
-                cursor={!isTypingComplete} 
-                onTypingDone={handleTypingComplete} 
+              <TypingEffect
+                text={["Hoop.co"]}
+                speed={120}
+                eraseDelay={1500}
+                typingDelay={500}
+                cursor={!isTypingComplete}
+                onTypingDone={handleTypingComplete}
               />
             </h1>
             <p className="text-white fs-5 mt-4">
-              <TypingEffect 
-                text={["Acesse conteúdos exclusivos e conecte-se com outros usuários. Faça login ou cadastre-se para explorar mais."]} 
-                speed={30} 
-                eraseDelay={5500} 
-                typingDelay={500} 
-                cursor={!isTypingComplete} 
-                onTypingDone={handleTypingComplete} 
+              <TypingEffect
+                text={["Acesse conteúdos exclusivos e conecte-se com outros usuários. Faça login ou cadastre-se para explorar mais."]}
+                speed={30}
+                eraseDelay={5500}
+                typingDelay={500}
+                cursor={!isTypingComplete}
+                onTypingDone={handleTypingComplete}
               />
             </p>
           </div>
@@ -57,7 +58,9 @@ function Index() {
 
         </div>
       </div>
+        <Footer/>
     </>
+
   );
 }
 

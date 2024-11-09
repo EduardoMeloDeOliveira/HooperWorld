@@ -6,18 +6,24 @@ import Register from './components/register/Register'
 import Login from './components/login/Login'
 import UserHomeScreen from './components/user-home-screen/UserHomeScreen';
 import Index from './components/index/Index';
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
 
 function App() {
 
   return (
     <BrowserRouter>
 
+      
       <Routes>
+   
         <Route path="/" element={<Index />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+     
         <Route path="/home" element={<UserHomeScreen />} />
       </Routes>
+      
+
+
       <ToastContainer />
     </BrowserRouter>
   )
