@@ -5,7 +5,7 @@ import { MdDynamicFeed } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { verifyToken, logoutService } from "../../Service/TokenVerifyAndLogoutService";
 
-function UserHomeScreen() {
+function SideBar() {
     const navigate = useNavigate();
     const [expanded, setExpanded] = useState(false);
 
@@ -83,4 +83,4 @@ function UserHomeScreen() {
     );
 }
 
-export default UserHomeScreen;
+export default SideBar;

@@ -12,6 +12,5 @@ public record QuizReponseDTO(
         String quizDescription,
         List<QuestionResponseDTO> questions
 
-        //TODO implementar a lista de questionDTO's no futuro
 ) {
 }
