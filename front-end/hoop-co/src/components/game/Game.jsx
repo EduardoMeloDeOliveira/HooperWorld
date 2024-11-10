@@ -10,7 +10,7 @@ function Game() {
     useEffect(() => {
         const loadQuizzes = async () => {
             try {
-                const token = sessionStorage.getItem('token'); 
+                const token = localStorage.getItem('token'); 
                 if (token) {
                     const data = await fetchQuizzes(token); 
                     setQuizzes(data);

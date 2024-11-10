@@ -1,26 +1,30 @@
 import React from 'react';
 import TypingEffect from 'react-typing-effect';
-import { FaJava } from "react-icons/fa6";
+import { FaGithub } from "react-icons/fa";
 
 
 function Footer() {
   return (
-    <footer className="bg-dark text-white py-2 mt-5">
-      <div className="container text-center d-flex justify-content-center align-items-center">
-        <p className='fs-3'>
-          <a href="https://github.com/EduardoMeloDeOliveira" target="_blank" rel="noopener noreferrer" className="text-white text-decoration-none">
-            <TypingEffect
-              text={["Melo Dev"]}
-              speed={100}
-              eraseDelay={5500}
-              typingDelay={100}
-              cursor={true}
-            />
-            <FaJava className/>
-          </a>
-        </p>
+   <footer>
+    <div className='flex-row d-flex justify-content-center align-items-center bg-dark py-3'>
+
+      <div>
+        <span><a href="https://github.com/EduardoMeloDeOliveira" target='_blank' className='text-decoration-none text-white'>
+        
+        <TypingEffect
+        text={`Developed by Eduardo Melo de Oliveira`}
+        speed={100}
+        eraseSpeed={100}
+        eraseDelay={100000}
+        typingDelay={0}
+        
+        />
+        <FaGithub className='fs-4'/>
+        </a></span>
       </div>
-    </footer>
+
+    </div>
+   </footer>
   );
 }
 

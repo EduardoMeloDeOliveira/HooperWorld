@@ -21,6 +21,7 @@ function Login({ toggleAuthForm }) {
     try {
       const response = await loginUser(formData);
       localStorage.setItem('token', response.data.token);
+      console.log(response.data.token)
       toast.success('Login realizado com sucesso!');
       navigate('/home');
     } catch (error) {

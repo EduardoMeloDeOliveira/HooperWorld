@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { CgGames } from "react-icons/cg";
 import { MdDynamicFeed } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
+import { PiCourtBasketball } from "react-icons/pi";
 import { verifyToken, logoutService } from "../../Service/TokenVerifyAndLogoutService";
 
 function SideBar() {
@@ -37,40 +38,51 @@ function SideBar() {
             >
                 <div className='h-75 justify-content-around d-flex w-100 flex-column'>
                     <div className='h-25 w-100 d-flex justify-content-center align-items-center flex-column'>
-                        <a
-                            href="#"
+                        <p
+                            onClick={() => handleNavigation('/home')}
+                            style={{ textDecoration: 'none', color: 'white' }}
+                            className='text-center'
+                        >
+                            <PiCourtBasketball className='fs-3 text-white' />
+                            {expanded && <p>Home</p>}
+                        </p>
+                    </div>
+
+                    <div className='h-25 w-100 d-flex justify-content-center align-items-center flex-column'>
+                        <p
                             onClick={() => handleNavigation('/profile')}
                             style={{ textDecoration: 'none', color: 'white' }}
                             className='text-center'
                         >
                             <CgProfile className='fs-3 text-white' />
                             {expanded && <p>Profile</p>}
-                        </a>
+                        </p>
                     </div>
 
                     <div className='h-25 w-100 d-flex justify-content-center align-items-center flex-column'>
-                        <a
-                            href="#"
+                        <p
+                           
                             onClick={() => handleNavigation('/posts')}
                             style={{ textDecoration: 'none', color: 'white' }}
                             className='text-center'
                         >
                             <MdDynamicFeed className='fs-3 text-white' />
                             {expanded && <p>Feed</p>}
-                        </a>
+                        </p>
                     </div>
 
                     <div className='h-25 w-100 d-flex justify-content-center align-items-center flex-column'>
-                        <a
-                            href="#"
+                        <p
+                           
                             onClick={() => handleNavigation('/games')}
                             style={{ textDecoration: 'none', color: 'white' }}
                             className='text-center'
                         >
                             <CgGames className='fs-3 text-white' />
                             {expanded && <p>Games</p>}
-                        </a>
+                        </p>
                     </div>
+                    
 
                 </div>
 
