@@ -58,9 +58,10 @@ public class PostController {
             @ApiResponse(responseCode = "204", description = "Post deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Post or User not found")
     })
-    @DeleteMapping("/{userId}/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long userId, @PathVariable Long postId) {
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@RequestHeader("Authorization")String token, @PathVariable Long postId) {
 
+        Long userId = tokenService.getUserIdFromToken(token);
         postService.deletePost(userId, postId);
         return ResponseEntity.noContent().build();
     }

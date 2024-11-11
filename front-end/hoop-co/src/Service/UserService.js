@@ -50,4 +50,23 @@ async function fetchUserIdFromToken(token) {
   return response.data;
 }
 
-export { registerUser, loginUser, fetchUserProfile, fetchPostsByUserId,createPost,fetchUserIdFromToken };
+
+async function fetchTopTenPosts(token) {
+  const response = await axios.get(`${API_BASE_URL}/posts/get-top-ten`,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
+
+async function deletePost(token, postId) {
+  const response = await axios.delete(`${API_BASE_URL}/posts/${postId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response;
+}
+
+export { registerUser, loginUser, fetchUserProfile, fetchPostsByUserId,createPost,fetchUserIdFromToken,fetchTopTenPosts,deletePost };

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUserProfile } from '../../Service/UserService';
+import { fetchUserProfile, fetchPostsByUserId } from '../../Service/UserService';
 import Post from '../post/Post';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
 function Profile() {
   const [user, setUser] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const userId = localStorage.getItem("userId")
-  console.log(userId)
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -19,6 +19,13 @@ function Profile() {
         .then((data) => setUser(data))
         .catch((err) => {
           setError('Erro ao carregar o perfil.');
+          console.error(err);
+        });
+
+      fetchPostsByUserId(token)
+        .then((data) => setPosts(data))
+        .catch((err) => {
+          setError('Erro ao carregar os posts.');
           console.error(err);
         });
     } else {
@@ -70,7 +77,7 @@ function Profile() {
           </Modal>
 
           <div className="col-12 d-flex justify-content-center mt-4">
-            <Post />
+            <Post posts={posts} /> {/* Passando os posts como props */}
           </div>
         </div>
       )}

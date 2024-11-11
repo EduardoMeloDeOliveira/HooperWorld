@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { createPost } from '../../Service/UserService';
+import { createPost, fetchTopTenPosts } from '../../Service/UserService';
+import Post from '../post/Post';
 
 function Feed() {
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [error, setError] = useState(null);
-
+  const [posts, setPosts] = useState([]);  
   const token = localStorage.getItem('token');
+
+ 
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const topPosts = await fetchTopTenPosts(token); 
+        setPosts(topPosts);
+      } catch (error) {
+        console.error('Erro ao carregar os posts:', error);
+      }
+    };
+
+    loadPosts();
+  }, []);
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -21,6 +36,8 @@ function Feed() {
         setShowModal(false);
         setTitle('');
         setContent('');
+        const updatedPosts = await fetchTopTenPosts(token);
+        setPosts(updatedPosts);
       } catch (error) {
         setError('Erro ao criar o post. Tente novamente.');
       }
@@ -80,6 +97,10 @@ function Feed() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <div className="col-12 d-flex justify-content-center mt-4">
+        <Post posts={posts} /> 
+      </div>
     </div>
   );
 }
