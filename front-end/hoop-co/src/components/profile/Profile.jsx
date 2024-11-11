@@ -60,12 +60,7 @@ function Profile() {
             variant="outline-primary"
             size="sm"
             onClick={handleProfileClick}
-            style={{
-              padding: '5px 10px',
-              fontSize: '0.8rem',
-              color: '#007bff',
-              borderColor: '#007bff',
-            }}
+           className='btn btn-outline-dark'
           >
             Infos do Perfil
           </Button>
@@ -88,12 +83,9 @@ function Profile() {
         </Modal>
 
         <div className="col-12 d-flex justify-content-center">
-          <div className="card p-5 shadow-lg" style={{ borderRadius: '8px', backgroundColor: '#f1f1f1' }}>
-            <h3 className="text-center mb-4" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
-              Meus Posts
-            </h3>
+           
             <Post />
-          </div>
+         
         </div>
       </div>
     </div>

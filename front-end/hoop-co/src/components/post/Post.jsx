@@ -46,36 +46,51 @@ function Post() {
 
   return (
     <div className="container">
+        <h2 className='text-center'>Meus posts</h2>
       {posts.length === 0 ? (
         <p>Não há posts para exibir.</p>
       ) : (
-        <div className="row justify-content-center g-4"> {/* g-4 adiciona o gap entre os itens */}
+        <div className="row justify-content-center g-4"> 
           {posts.map((post) => (
             <div
               key={post.postId}
-              className="col-12 col-md-4 col-lg-3"
+              className="col-12 col-md-6 col-lg-4" 
             >
               <div
                 className="card shadow-sm border-light rounded-3"
                 style={{
-                  width: '300px', 
-                  height: 'auto',  // Ajusta a altura do card conforme o conteúdo
+                  width: '100%', 
                   display: 'flex',
                   flexDirection: 'column',
                 }}
               >
                 <div className="card-body d-flex flex-column" style={{ height: '100%' }}>
-                  <div className="mb-3">
+                  <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                       <strong>{post.user.name}</strong>
+                      <small className="d-block text-muted">
+                        {new Date(post.createdAt).toLocaleString()}
+                      </small>
                     </div>
-                    <small className="d-block text-muted mb-2">
-                      {new Date(post.createdAt).toLocaleString()}
-                    </small>
-                    <h5 className="card-title" style={{ fontSize: '1.25rem' }}>
-                      {post.title}
-                    </h5>
+                    <div>
+                      <button
+                        className="btn btn-sm btn-primary me-2"
+                        onClick={() => handleEdit(post.postId)}
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(post.postId)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
                   </div>
+
+                  <h5 className="card-title" style={{ fontSize: '1.25rem' }}>
+                    {post.title}
+                  </h5>
 
                   <hr /> {/* Traço separando título do conteúdo */}
 
@@ -85,26 +100,12 @@ function Post() {
                       fontSize: '1rem',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      height: 'auto', // Deixa o conteúdo ajustar sua altura
+                      whiteSpace: 'nowrap', // Impede o texto de quebrar linha
+                      height: 'auto',
                     }}
                   >
                     {post.content}
                   </p>
-
-                  <div className="mt-3">
-                    <button
-                      className="btn btn-warning me-2"
-                      onClick={() => handleEdit(post.postId)}
-                    >
-                      <FaEdit /> Editar
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(post.postId)}
-                    >
-                      <FaTrash /> Deletar
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
