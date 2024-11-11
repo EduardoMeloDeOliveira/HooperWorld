@@ -29,4 +29,10 @@ public class UserController {
         Long userId = tokenService.getUserIdFromToken(token);
         return ResponseEntity.ok(userService.getUserById(userId));
     }
+
+    @GetMapping("/user-id")
+    public ResponseEntity<Long> getUserIdFromToken(@RequestHeader("Authorization") String token){
+        Long userId = tokenService.getUserIdFromToken(token);
+        return ResponseEntity.ok(userService.userId(userId));
+    }
 }

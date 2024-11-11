@@ -9,13 +9,14 @@ function Profile() {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  const userId = localStorage.getItem("userId")
+  console.log(userId)
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       fetchUserProfile(token)
-        .then((data) => {
-          setUser(data);
-        })
+        .then((data) => setUser(data))
         .catch((err) => {
           setError('Erro ao carregar o perfil.');
           console.error(err);
@@ -33,61 +34,46 @@ function Profile() {
     setShowModal(false);
   };
 
-  if (error) {
-    return (
-      <div className="container d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-        <div className="alert alert-danger" style={{ fontSize: '1.2rem', padding: '15px 25px', textAlign: 'center' }}>
+  return (
+    <div className="container" style={{ minHeight: '100vh', paddingTop: '20px' }}>
+      {error ? (
+        <div className="alert alert-danger text-center mt-4" role="alert" style={{ fontSize: '1.2rem' }}>
           {error}
         </div>
-      </div>
-    );
-  }
+      ) : (
+        <div className="row">
+          <div className="col-12 d-flex justify-content-start mb-3">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={handleProfileClick}
+              className="btn btn-outline-dark"
+            >
+              Infos do Perfil
+            </Button>
+          </div>
 
-  return (
-    <div className="container" style={{ height: '100vh' }}>
-      <div className="row d-flex justify-content-center align-items-center" style={{ height: '100%' }}>
-        
-        <div
-          className="p-3"
-          style={{
-            backgroundColor: 'transparent',
-            boxShadow: 'none',
-            borderRadius: '50%',
-            zIndex: 10,
-          }}
-        >
-          <Button
-            variant="outline-primary"
-            size="sm"
-            onClick={handleProfileClick}
-           className='btn btn-outline-dark'
-          >
-            Infos do Perfil
-          </Button>
-        </div>
+          <Modal show={showModal} onHide={handleCloseModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Perfil do Usuário</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {user ? (
+                <>
+                  <p><strong>Nome:</strong> {user.name}</p>
+                  <p><strong>E-mail:</strong> {user.email}</p>
+                </>
+              ) : (
+                <p>Carregando perfil...</p>
+              )}
+            </Modal.Body>
+          </Modal>
 
-        <Modal show={showModal} onHide={handleCloseModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Perfil do Usuário</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {user ? (
-              <>
-                <p><strong>Nome:</strong> {user.name}</p>
-                <p><strong>E-mail:</strong> {user.email}</p>
-              </>
-            ) : (
-              <p>Carregando perfil...</p>
-            )}
-          </Modal.Body>
-        </Modal>
-
-        <div className="col-12 d-flex justify-content-center">
-           
+          <div className="col-12 d-flex justify-content-center mt-4">
             <Post />
-         
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchPostsByUserId } from '../../Service/UserService';
-import { FaEdit, FaTrash } from 'react-icons/fa'; // Ícones de editar e deletar
+import { FaEdit, FaTrash } from 'react-icons/fa'; 
 
 function Post() {
   const [posts, setPosts] = useState([]);
@@ -8,11 +8,13 @@ function Post() {
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem('token');
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     if (token) {
       fetchPostsByUserId(token)
         .then((data) => {
+          console.log(data);
           setPosts(data);
           setLoading(false);
         })
@@ -27,12 +29,10 @@ function Post() {
   }, [token]);
 
   const handleEdit = (postId) => {
-    // Lógica para editar o post
     console.log(`Editando post com ID: ${postId}`);
   };
 
   const handleDelete = (postId) => {
-    // Lógica para deletar o post
     console.log(`Deletando post com ID: ${postId}`);
   };
 
@@ -46,7 +46,7 @@ function Post() {
 
   return (
     <div className="container">
-        <h2 className='text-center'>Meus posts</h2>
+      <h2 className='text-center'>Meus posts</h2>
       {posts.length === 0 ? (
         <p>Não há posts para exibir.</p>
       ) : (
@@ -72,27 +72,30 @@ function Post() {
                         {new Date(post.createdAt).toLocaleString()}
                       </small>
                     </div>
-                    <div>
-                      <button
-                        className="btn btn-sm btn-primary me-2"
-                        onClick={() => handleEdit(post.postId)}
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(post.postId)}
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
+                    {/* Mostrar os botões apenas se o userId do post for igual ao userId salvo no localStorage */}
+                    {parseInt(userId) === post.user.userId && (
+                      <div>
+                        <button
+                          className="btn btn-sm btn-primary me-2"
+                          onClick={() => handleEdit(post.postId)}
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDelete(post.postId)}
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <h5 className="card-title" style={{ fontSize: '1.25rem' }}>
                     {post.title}
                   </h5>
 
-                  <hr /> {/* Traço separando título do conteúdo */}
+                  <hr />  
 
                   <p
                     className="card-text"
@@ -100,7 +103,7 @@ function Post() {
                       fontSize: '1rem',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap', // Impede o texto de quebrar linha
+                      whiteSpace: 'nowrap', 
                       height: 'auto',
                     }}
                   >

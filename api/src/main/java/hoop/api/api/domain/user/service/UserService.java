@@ -55,6 +55,11 @@ public class UserService {
     }
 
 
+    public Long userId (Long userId){
+        User user = existsUserById(userId);
+        return user.getId();
+    }
+
 
 
 }

@@ -93,4 +93,6 @@ public class PostController {
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.getPostByPostId(postId));
     }
+
+    // TODO criar um function que retorna o id do user e verifica se ele pode ou n fazer as coisas
 }

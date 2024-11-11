@@ -5,6 +5,7 @@ import { MdDynamicFeed } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { PiCourtBasketball } from "react-icons/pi";
 import { verifyToken, logoutService } from "../../Service/TokenVerifyAndLogoutService";
+import { fetchUserIdFromToken } from "../../Service/UserService"; 
 
 function SideBar() {
     const navigate = useNavigate();
@@ -13,6 +14,17 @@ function SideBar() {
     useEffect(() => {
         if (!verifyToken()) {
             navigate("/");
+        } else {
+            const token = localStorage.getItem("token"); 
+            if (token) {
+                fetchUserIdFromToken(token)
+                    .then(userId => {
+                        localStorage.setItem("userId", userId); 
+                    })
+                    .catch(error => {
+                        console.error("Erro ao buscar userId:", error);
+                    });
+            }
         }
     }, [navigate]);
 
@@ -61,7 +73,6 @@ function SideBar() {
 
                     <div className='h-25 w-100 d-flex justify-content-center align-items-center flex-column'>
                         <p
-                           
                             onClick={() => handleNavigation('/feed')}
                             style={{ textDecoration: 'none', color: 'white' }}
                             className='text-center'
@@ -73,7 +84,6 @@ function SideBar() {
 
                     <div className='h-25 w-100 d-flex justify-content-center align-items-center flex-column'>
                         <p
-                           
                             onClick={() => handleNavigation('/games')}
                             style={{ textDecoration: 'none', color: 'white' }}
                             className='text-center'
@@ -82,14 +92,11 @@ function SideBar() {
                             {expanded && <p>Games</p>}
                         </p>
                     </div>
-                    
-
                 </div>
 
                 <div className="h-25 w-100 d-flex justify-content-center align-items-center">
                     <button onClick={handleLogout} className="btn btn-danger">Logout</button>
                 </div>
-
             </nav>
         </div>
     );

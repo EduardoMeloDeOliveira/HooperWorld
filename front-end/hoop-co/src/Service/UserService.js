@@ -40,4 +40,14 @@ async function createPost(token, postData) {
   return response.data;
 }
 
-export { registerUser, loginUser, fetchUserProfile, fetchPostsByUserId,createPost };
+
+async function fetchUserIdFromToken(token) {
+  const response = await axios.get(`${API_BASE_URL}/users/user-id`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
+
+export { registerUser, loginUser, fetchUserProfile, fetchPostsByUserId,createPost,fetchUserIdFromToken };
