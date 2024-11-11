@@ -26,11 +26,35 @@ public class TokenService {
                     .withIssuer("api-hoop")
                     .withSubject(user.getEmail())
                     .withExpiresAt(expiresAt())
+                    .withClaim("userId", user.getId())
                     .sign(algorithm);
         } catch (JWTCreationException ex) {
             throw new RuntimeException("JWT generation failed");
         }
 
+    }
+
+
+    public Long getUserIdFromToken(String token) {
+
+        try {
+
+            if(token.startsWith("Bearer ")){
+                token = token.replace("Bearer ","");
+            }
+
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+
+            return JWT.require(algorithm)
+                    .withIssuer("api-hoop")
+                    .build()
+                    .verify(token)
+                    .getClaim("userId")
+                    .asLong();
+
+        }catch (JWTVerificationException ex){
+            throw new RuntimeException("JWT verification failed userid" + ex.getMessage());
+        }
     }
 
 

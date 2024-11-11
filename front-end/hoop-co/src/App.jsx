@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import PageIndex from './pages/PageIndex';
 import PageUserWelcome from './pages/PageUserGame';
 import PageHomeUser from './pages/PageHomeUser';
+import PageProfile from './pages/PageProfile';
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<PageIndex />} />
         <Route path="/home" element={<PageHomeUser/>}/>
         <Route path="/games" element={<PageUserWelcome/>} />
+        <Route path="/profile" element={<PageProfile/>}/>
       </Routes>
       
 

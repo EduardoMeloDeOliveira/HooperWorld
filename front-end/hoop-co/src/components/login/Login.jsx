@@ -20,6 +20,7 @@ function Login({ toggleAuthForm }) {
     e.preventDefault();
     try {
       const response = await loginUser(formData);
+      console.log(response.data)
       localStorage.setItem('token', response.data.token);
       console.log(response.data.token)
       toast.success('Login realizado com sucesso!');

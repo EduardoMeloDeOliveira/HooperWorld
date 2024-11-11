@@ -3,6 +3,7 @@ package hoop.api.api.controller;
 import hoop.api.api.domain.post.DTO.PostRequestDTO;
 import hoop.api.api.domain.post.DTO.PostResponseDTO;
 import hoop.api.api.domain.post.service.PostService;
+import hoop.api.api.infra.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,6 +20,9 @@ public class PostController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private TokenService tokenService;
 
 
     @Operation(summary = "Create a new post for a user")
@@ -65,8 +69,10 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "List of user's posts"),
             @ApiResponse(responseCode = "204", description = "No posts found for user")
     })
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<PostResponseDTO>> getPostsByUserId(@PathVariable Long userId) {
+    @GetMapping("/get-post-by-user")
+    public ResponseEntity<List<PostResponseDTO>> getPostsByUserId(@RequestHeader("Authorization")String token) {
+
+        Long userId = tokenService.getUserIdFromToken(token);
 
         List<PostResponseDTO> posts = postService.getPostsByUserId(userId);
 

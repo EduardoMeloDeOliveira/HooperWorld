@@ -60,6 +60,7 @@ public class AuthAndRegisterUserController {
 
       var user = (User) auth.getPrincipal();
 
+
       var jwtToken =  tokenService.generateToken(user);
 
       return ResponseEntity.ok(new JwtDTO(jwtToken));
