@@ -1,5 +1,7 @@
 package hoop.api.api.domain.post.service;
 
+import hoop.api.api.domain.like.entity.Like;
+import hoop.api.api.domain.like.service.LikeService;
 import hoop.api.api.domain.post.DTO.PostRequestDTO;
 import hoop.api.api.domain.post.DTO.PostResponseDTO;
 import hoop.api.api.domain.post.entity.Post;
@@ -10,6 +12,7 @@ import hoop.api.api.domain.user.service.UserService;
 import hoop.api.api.handler.exceptions.ConflitException;
 import hoop.api.api.handler.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +27,8 @@ public class PostService {
 
     @Autowired
     private UserService userService;
+
+   
 
 
     public PostResponseDTO savePost(Long userId, PostRequestDTO postRequestDTO) {
@@ -61,6 +66,9 @@ public class PostService {
         if (!post.getUser().getId().equals(userId)) {
             throw new ConflitException("You are not allowed to delete this post");
         }
+
+
+        post.getLikes().clear();
 
         postRepository.delete(post);
     }
