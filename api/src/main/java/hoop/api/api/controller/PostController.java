@@ -30,10 +30,11 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "Post created successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PostMapping("/{userId}")
+    @PostMapping()
     public ResponseEntity<PostResponseDTO> createPost
-            (@PathVariable Long userId,
+            (@RequestHeader("Authorization")String token,
              @RequestBody @Valid PostRequestDTO requestDTO) {
+        Long userId = tokenService.getUserIdFromToken(token);
         return ResponseEntity.ok(postService.savePost(userId, requestDTO));
     }
 
@@ -43,11 +44,12 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "Post updated successfully"),
             @ApiResponse(responseCode = "404", description = "Post or User not found")
     })
-    @PutMapping("/{userId}/{postId}")
+    @PutMapping("/{postId}")
     public ResponseEntity<PostResponseDTO> updatePost
-            (@PathVariable Long userId,
+            (@RequestHeader("Authorization")String token,
              @PathVariable Long postId,
              @RequestBody @Valid PostRequestDTO requestDTO) {
+        Long userId = tokenService.getUserIdFromToken(token);
         return ResponseEntity.ok(postService.updatePost(userId, postId, requestDTO));
     }
 

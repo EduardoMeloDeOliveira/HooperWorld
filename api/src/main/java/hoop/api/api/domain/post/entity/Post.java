@@ -7,6 +7,7 @@ import hoop.api.api.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class Post {
 
     private String title;
     private String content;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     private User user;

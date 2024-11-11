@@ -1,73 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { fetchQuizzes } from '../../Service/GameService';
-import TypingEffect from 'react-typing-effect';
+import { fetchUserProfile } from '../../Service/UserService';
+import Post from '../post/Post';
+import { Button } from 'react-bootstrap';
 
-function Game() {
-    const [quizzes, setQuizzes] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [isTypingComplete, setIsTypingComplete] = useState(false);
+function Profile() {
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+  const [posts, setPosts] = useState([]); // Lista de posts
 
-    useEffect(() => {
-        const loadQuizzes = async () => {
-            try {
-                const token = localStorage.getItem('token'); 
-                if (token) {
-                    const data = await fetchQuizzes(token); 
-                    setQuizzes(data);
-                } else {
-                    console.error('Token não encontrado');
-                }
-            } catch (error) {
-                console.error('Erro ao carregar quizzes:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetchUserProfile(token)
+        .then((data) => {
+          setUser(data);
+          // Exemplo: Carregar posts aqui
+          setPosts(data.posts || []); // Supondo que `data.posts` seja a lista de posts do usuário
+        })
+        .catch((err) => {
+          setError('Erro ao carregar o perfil.');
+          console.error(err);
+        });
+    } else {
+      setError('Token de autenticação não encontrado.');
+    }
+  }, []);
 
-        loadQuizzes();
-    }, []);
+  return (
+    <div className="container min-vh-100 d-flex flex-column align-items-center">
+      {/* Botão "User Infos" no topo à esquerda */}
+      <Button variant="link" style={{ position: 'absolute', top: '20px', left: '20px' }}>
+        User Infos
+      </Button>
 
-    const handleTypingComplete = () => {
-        setIsTypingComplete(true);
-    };
-
-    if (loading) return <p>Carregando quizzes...</p>;
-
-    return (
-        <div className="d-flex justify-content-center align-items-center min-vh-100">
-            <div className="container text-center">
-                <h2>
-                    <TypingEffect 
-                        text={"Game time..."} 
-                        speed={150} 
-                        eraseDelay={10500} 
-                        typingDelay={100}
-                        cursor={!isTypingComplete}
-                        onTypingDone={handleTypingComplete}
-                    />
-                </h2>
-                {quizzes.length === 0 ? (
-                    <p>Nenhum quiz encontrado.</p>
-                ) : (
-                    <div className="row justify-content-center">
-                        {quizzes.map(quiz => (
-                            <div
-                                key={quiz.quizId}
-                                className="col-md-4 mb-4"
-                            >
-                                <div className="card h-100">
-                                    <div className="card-body">
-                                        <h3 className="card-title">{quiz.quizTitle}</h3>
-                                        <p className="card-text">{quiz.quizDescription}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+      {/* Área de posts centralizada e exibida em rows */}
+      <div className="container text-center mt-5">
+        <h2 className="text-center mb-4" style={{ fontSize: '2rem', fontWeight: 'bold' }}>Posts</h2>
+        {error && <p className="alert alert-danger">{error}</p>}
+        <div className="row justify-content-center">
+          {posts.length === 0 ? (
+            <p>Nenhum post encontrado.</p>
+          ) : (
+            posts.map((post, index) => (
+              <div key={index} className="col-md-4 mb-4">
+                <div className="card h-100" style={{ width: '100%', height: '300px' }}>
+                  <div className="card-body">
+                    <Post post={post} />
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
-export default Game;
+export default Profile;

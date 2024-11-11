@@ -62,7 +62,7 @@ function SideBar() {
                     <div className='h-25 w-100 d-flex justify-content-center align-items-center flex-column'>
                         <p
                            
-                            onClick={() => handleNavigation('/posts')}
+                            onClick={() => handleNavigation('/feed')}
                             style={{ textDecoration: 'none', color: 'white' }}
                             className='text-center'
                         >

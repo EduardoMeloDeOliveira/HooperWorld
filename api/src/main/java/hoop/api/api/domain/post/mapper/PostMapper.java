@@ -7,6 +7,7 @@ import hoop.api.api.domain.post.DTO.PostResponseDTO;
 import hoop.api.api.domain.post.entity.Post;
 import hoop.api.api.domain.user.mapper.UserMapper;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 public class PostMapper {
@@ -14,6 +15,7 @@ public class PostMapper {
     public static Post toEnity(PostRequestDTO requestDTO){
         return Post.builder()
                 .id(null)
+                .createdAt(LocalDateTime.now())
                 .title(requestDTO.title())
                 .content(requestDTO.content())
                 .build();
@@ -22,6 +24,7 @@ public class PostMapper {
     public static PostResponseDTO toDto(Post post){
         return PostResponseDTO.builder()
                 .postId(post.getId())
+                .createdAt(post.getCreatedAt())
                 .user(UserMapper.toDto(post.getUser()))
                 .title(post.getTitle())
                 .content(post.getContent())
