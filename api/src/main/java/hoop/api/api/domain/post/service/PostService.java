@@ -98,5 +98,13 @@ public class PostService {
                 .orElseThrow(() -> new ObjectNotFoundException("Post not found"));
     }
 
+    public List<PostResponseDTO> getTop10Posts(){
+        List<Post> posts = postRepository.findTop10ByOrderByCreatedAtDesc();
+
+        List<PostResponseDTO> postResponseDTOS = new ArrayList<>();
+
+        return posts.stream().map(p -> PostMapper.toDto(p))
+                .collect(Collectors.toList());
+    }
 
 }

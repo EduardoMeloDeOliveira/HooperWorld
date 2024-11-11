@@ -94,5 +94,15 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostByPostId(postId));
     }
 
-    // TODO criar um function que retorna o id do user e verifica se ele pode ou n fazer as coisas
+
+    @GetMapping("/get-top-ten")
+    public ResponseEntity<List<PostResponseDTO>> getTopTenPosts(){
+        List<PostResponseDTO> posts = postService.getTop10Posts();
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
 }

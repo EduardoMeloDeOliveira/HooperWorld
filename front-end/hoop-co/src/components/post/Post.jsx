@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchPostsByUserId } from '../../Service/UserService';
-import { FaEdit, FaTrash } from 'react-icons/fa'; 
+import { FaEdit, FaTrash, FaThumbsUp } from 'react-icons/fa'; 
 
 function Post() {
   const [posts, setPosts] = useState([]);
@@ -36,6 +36,16 @@ function Post() {
     console.log(`Deletando post com ID: ${postId}`);
   };
 
+  const handleLike = (postId) => {
+    setPosts((prevPosts) => 
+      prevPosts.map((post) => 
+        post.postId === postId 
+          ? { ...post, likes: [...post.likes, userId] } // Adiciona o userId aos likes
+          : post
+      )
+    );
+  };
+
   if (loading) {
     return <div>Carregando...</div>;
   }
@@ -46,7 +56,7 @@ function Post() {
 
   return (
     <div className="container">
-      <h2 className='text-center'>Meus posts</h2>
+      <h2 className='text-center mt-3'>posts</h2>
       {posts.length === 0 ? (
         <p>Não há posts para exibir.</p>
       ) : (
@@ -109,6 +119,17 @@ function Post() {
                   >
                     {post.content}
                   </p>
+
+                  {/* Botão de like e contagem de likes */}
+                  <div className="d-flex justify-content-between align-items-center mt-auto">
+                    <button 
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => handleLike(post.postId)}
+                    >
+                      <FaThumbsUp /> Curtir
+                    </button>
+                    <small className="text-muted">{post.likes.length} Likes</small>
+                  </div>
                 </div>
               </div>
             </div>
