@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaThumbsUp } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { deletePost, updatePost } from '../../Service/UserService'; 
+import { deletePost, updatePost, likePost, unlikePost } from '../../Service/UserService'; 
 import { toast } from 'react-toastify';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -11,14 +11,32 @@ function Post({ posts }) {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editPostData, setEditPostData] = useState({ title: '', content: '' });
   const [currentPostId, setCurrentPostId] = useState(null);
+  const [showLikeModal, setShowLikeModal] = useState(false);
+  const [likeDetails, setLikeDetails] = useState([]);
   
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Recupera os likes armazenados no localStorage
+  const getLikesFromLocalStorage = () => {
+    const storedLikes = JSON.parse(localStorage.getItem("userLikes"));
+    return storedLikes || {};
+  };
+
+  const saveLikesToLocalStorage = (likes) => {
+    localStorage.setItem("userLikes", JSON.stringify(likes));
+  };
+
   useEffect(() => {
-    setUpdatedPosts(posts);
+    // Recupera o estado de likes do localStorage
+    const storedLikes = getLikesFromLocalStorage();
+    const updatedPostsWithLikes = posts.map(post => ({
+      ...post,
+      likedByUser: storedLikes[post.postId] || false
+    }));
+    setUpdatedPosts(updatedPostsWithLikes);
   }, [posts]);
 
   const pageTitle = location.pathname === '/profile' ? 'Meus Posts' : 'Timeline';
@@ -41,8 +59,33 @@ function Post({ posts }) {
     }
   };
 
-  const handleLike = (postId) => {
-    console.log(`Curtindo post com ID: ${postId}`);
+  const handleLike = async (postId) => {
+    try {
+      const post = updatedPosts.find(p => p.postId === postId);
+      const isLiked = post.likedByUser;
+
+      if (isLiked) {
+        await unlikePost(token, postId);
+        post.likedByUser = false;
+      } else {
+        await likePost(token, postId);
+        post.likedByUser = true;
+      }
+
+      // Atualiza o estado local para persistir o estado do like
+      const updatedLikes = { ...getLikesFromLocalStorage(), [postId]: post.likedByUser };
+      saveLikesToLocalStorage(updatedLikes);
+
+      // Atualiza o estado do post
+      setUpdatedPosts(prevPosts =>
+        prevPosts.map(p =>
+          p.postId === postId ? { ...p, likedByUser: post.likedByUser } : p
+        )
+      );
+    } catch (error) {
+      console.error('Erro ao curtir/descurtir o post:', error);
+      toast.error('Erro ao curtir/descurtir o post!');
+    }
   };
 
   const handleEditSave = async () => {
@@ -59,6 +102,15 @@ function Post({ posts }) {
       console.error('Erro ao atualizar o post:', error);
       toast.error('Erro ao atualizar o post!');
     }
+  };
+
+  const handleShowLikes = (likes) => {
+    const likeDetailsFormatted = likes.map(like => ({
+      userName: like.likedBy,
+      likedAt: like.likedAt
+    }));
+    setLikeDetails(likeDetailsFormatted);
+    setShowLikeModal(true);
   };
 
   return (
@@ -95,10 +147,15 @@ function Post({ posts }) {
                   <p className="card-text" style={{ fontSize: '1rem', overflowY: 'auto', maxHeight: '150px' }}>{post.content}</p>
 
                   <div className="d-flex justify-content-between align-items-center mt-auto">
-                    <button className="btn btn-sm btn-outline-primary" onClick={() => handleLike(post.postId)}>
-                      <FaThumbsUp /> Curtir
+                    <button className={`btn btn-sm ${post.likedByUser ? 'btn-danger' : 'btn-outline-primary'}`} onClick={() => handleLike(post.postId)}>
+                      <FaThumbsUp /> {post.likedByUser ? 'Descurtir' : 'Curtir'}
                     </button>
-                    <small className="text-muted">{post.likes.length} Likes</small>
+                    <button 
+                      className="btn btn-sm btn-outline-secondary" 
+                      onClick={() => handleShowLikes(post.likes)}
+                    >
+                      {post.likes.length} Likes
+                    </button>
                   </div>
                 </div>
               </div>
@@ -133,6 +190,26 @@ function Post({ posts }) {
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setEditModalVisible(false)}>Cancelar</Button>
           <Button variant="primary" onClick={handleEditSave}>Salvar</Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showLikeModal} onHide={() => setShowLikeModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Likes</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {likeDetails.length > 0 ? (
+            <ul>
+              {likeDetails.map((like, index) => (
+                <li key={index}>{like.userName} - {like.likedAt}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>Não há likes para este post.</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowLikeModal(false)}>Fechar</Button>
         </Modal.Footer>
       </Modal>
     </div>
