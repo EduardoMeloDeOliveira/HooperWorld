@@ -8,14 +8,13 @@ function Feed() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [error, setError] = useState(null);
-  const [posts, setPosts] = useState([]);  
+  const [posts, setPosts] = useState([]);
   const token = localStorage.getItem('token');
 
- 
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const topPosts = await fetchTopTenPosts(token); 
+        const topPosts = await fetchTopTenPosts(token);
         setPosts(topPosts);
       } catch (error) {
         console.error('Erro ao carregar os posts:', error);
@@ -98,8 +97,18 @@ function Feed() {
         </Modal.Footer>
       </Modal>
 
-      <div className="col-12 d-flex justify-content-center mt-4">
-        <Post posts={posts} /> 
+      <div
+        className="col-12 mt-4 d-flex flex-column align-items-center border rounded p-3 bg-dark"
+        style={{
+          height: '80vh',
+          overflowY: 'auto',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#6c757d #f1f1f1',
+        }}
+      >
+        <div className="w-100">
+          <Post posts={posts} />
+        </div>
       </div>
     </div>
   );

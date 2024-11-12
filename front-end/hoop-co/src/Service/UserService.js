@@ -69,4 +69,14 @@ async function deletePost(token, postId) {
   return response;
 }
 
-export { registerUser, loginUser, fetchUserProfile, fetchPostsByUserId,createPost,fetchUserIdFromToken,fetchTopTenPosts,deletePost };
+
+async function updatePost(token, postId, postData) {
+  const response = await axios.put(`${API_BASE_URL}/posts/${postId}`, postData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
+
+export { registerUser, loginUser, fetchUserProfile, fetchPostsByUserId,createPost,fetchUserIdFromToken,fetchTopTenPosts,deletePost, updatePost };

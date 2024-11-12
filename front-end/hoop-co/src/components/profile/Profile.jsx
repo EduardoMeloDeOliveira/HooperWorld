@@ -23,7 +23,10 @@ function Profile() {
         });
 
       fetchPostsByUserId(token)
-        .then((data) => setPosts(data))
+        .then((data) => {
+          console.log('Posts recebidos:', data); 
+          setPosts(data);
+        })
         .catch((err) => {
           setError('Erro ao carregar os posts.');
           console.error(err);
@@ -77,7 +80,7 @@ function Profile() {
           </Modal>
 
           <div className="col-12 d-flex justify-content-center mt-4">
-            <Post posts={posts} /> {/* Passando os posts como props */}
+            <Post posts={posts} />
           </div>
         </div>
       )}

@@ -28,8 +28,7 @@ public class PostService {
     @Autowired
     private UserService userService;
 
-   
-
+    
 
     public PostResponseDTO savePost(Long userId, PostRequestDTO postRequestDTO) {
 
