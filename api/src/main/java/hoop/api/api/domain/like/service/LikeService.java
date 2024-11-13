@@ -8,11 +8,11 @@ import hoop.api.api.domain.post.entity.Post;
 import hoop.api.api.domain.post.service.PostService;
 import hoop.api.api.domain.user.entity.User;
 import hoop.api.api.domain.user.service.UserService;
-import hoop.api.api.handler.exceptions.ConflitException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class LikeService {
@@ -27,39 +27,26 @@ public class LikeService {
     private PostService postService;
 
 
-    public LikeResponseDTO attachLikeToPost(Long userId, Long postId) {
+    public LikeResponseDTO toggleLike(Long userId, Long postId) {
         User user = userService.existsUserById(userId);
         Post post = postService.existsPost(postId);
-
-        if (likeRepository.existsByUserAndPost(user, post)) {
-            throw new ConflitException("User already liked this post");
-        }
-
-        Like like = Like.builder()
-                .id(null)
-                .likedAt(LocalDateTime.now())
-                .user(user)
-                .post(post)
-                .build();
-
-        likeRepository.save(like);
-        return LikeMapper.toDto(like);
-    }
+        Optional<Like> likeOpt = likeRepository.findByUserAndPost(user, post);
 
 
+       if(likeOpt.isPresent()){
+           likeRepository.delete(likeOpt.get());
+           return null;
+       }
 
+           Like like = Like.builder()
+                   .id(null)
+                   .post(post)
+                   .user(user)
+                   .likedAt(LocalDateTime.now())
+                   .build();
 
-    public void dettachLikeToPost(Long userId, Long likeId) {
+           likeRepository.save(like);
 
-        User user = userService.existsUserById(userId);
-        Like like = likeRepository.findById(likeId).orElseThrow(()-> new ConflitException("Like not found"));
-
-        if(!user.getId().equals(like.getUser().getId())) {
-
-            throw new ConflitException("Like not detached");
-        }
-
-        likeRepository.delete(like);
-
+           return LikeMapper.toDto(like);
     }
 }

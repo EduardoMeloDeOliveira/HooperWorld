@@ -1,40 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaThumbsUp } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { deletePost, updatePost, likePost, unlikePost } from '../../Service/UserService'; 
+import { deletePost, updatePost, toggleLike } from '../../Service/UserService';
 import { toast } from 'react-toastify';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
 function Post({ posts }) {
-  const [updatedPosts, setUpdatedPosts] = useState(posts);
+  const [updatedPosts, setUpdatedPosts] = useState([]);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editPostData, setEditPostData] = useState({ title: '', content: '' });
   const [currentPostId, setCurrentPostId] = useState(null);
   const [showLikeModal, setShowLikeModal] = useState(false);
   const [likeDetails, setLikeDetails] = useState([]);
-  
+
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Recupera os likes armazenados no localStorage
-  const getLikesFromLocalStorage = () => {
-    const storedLikes = JSON.parse(localStorage.getItem("userLikes"));
-    return storedLikes || {};
-  };
+  const getLikesFromLocalStorage = () => JSON.parse(localStorage.getItem("userLikes")) || {};
 
   const saveLikesToLocalStorage = (likes) => {
     localStorage.setItem("userLikes", JSON.stringify(likes));
   };
 
   useEffect(() => {
-    // Recupera o estado de likes do localStorage
     const storedLikes = getLikesFromLocalStorage();
     const updatedPostsWithLikes = posts.map(post => ({
       ...post,
-      likedByUser: storedLikes[post.postId] || false
+      likedByUser: storedLikes[post.postId]?.liked || false,
+      likeId: storedLikes[post.postId]?.likeId || null,
     }));
     setUpdatedPosts(updatedPostsWithLikes);
   }, [posts]);
@@ -59,27 +55,27 @@ function Post({ posts }) {
     }
   };
 
-  const handleLike = async (postId) => {
+  const handleLikeToggle = async (postId) => {
     try {
-      const post = updatedPosts.find(p => p.postId === postId);
-      const isLiked = post.likedByUser;
+      const likeResponse = await toggleLike(token, postId);
+      const updatedLikeStatus = { liked: likeResponse.liked, likeId: likeResponse.likeId };
 
-      if (isLiked) {
-        await unlikePost(token, postId);
-        post.likedByUser = false;
-      } else {
-        await likePost(token, postId);
-        post.likedByUser = true;
-      }
+      const storedLikes = getLikesFromLocalStorage();
+      storedLikes[postId] = updatedLikeStatus;
+      saveLikesToLocalStorage(storedLikes);
 
-      // Atualiza o estado local para persistir o estado do like
-      const updatedLikes = { ...getLikesFromLocalStorage(), [postId]: post.likedByUser };
-      saveLikesToLocalStorage(updatedLikes);
-
-      // Atualiza o estado do post
       setUpdatedPosts(prevPosts =>
-        prevPosts.map(p =>
-          p.postId === postId ? { ...p, likedByUser: post.likedByUser } : p
+        prevPosts.map(post =>
+          post.postId === postId
+            ? {
+                ...post,
+                likedByUser: updatedLikeStatus.liked,
+                likeId: updatedLikeStatus.likeId,
+                likes: updatedLikeStatus.liked
+                  ? [...post.likes, { likedBy: userId, likedAt: new Date().toISOString() }]
+                  : post.likes.filter(like => like.likedBy !== userId)
+              }
+            : post
         )
       );
     } catch (error) {
@@ -147,14 +143,14 @@ function Post({ posts }) {
                   <p className="card-text" style={{ fontSize: '1rem', overflowY: 'auto', maxHeight: '150px' }}>{post.content}</p>
 
                   <div className="d-flex justify-content-between align-items-center mt-auto">
-                    <button className={`btn btn-sm ${post.likedByUser ? 'btn-danger' : 'btn-outline-primary'}`} onClick={() => handleLike(post.postId)}>
-                      <FaThumbsUp /> {post.likedByUser ? 'Descurtir' : 'Curtir'}
-                    </button>
-                    <button 
-                      className="btn btn-sm btn-outline-secondary" 
-                      onClick={() => handleShowLikes(post.likes)}
+                    <button
+                      className={`btn btn-sm ${post.likedByUser ? 'btn-primary' : 'btn-outline-primary'}`}
+                      onClick={() => handleLikeToggle(post.postId)}
                     >
-                      {post.likes.length} Likes
+                      <FaThumbsUp /> {post.likes.length}
+                    </button>
+                    <button className="btn btn-sm btn-outline-info" onClick={() => handleShowLikes(post.likes)}>
+                      Ver Curtidas
                     </button>
                   </div>
                 </div>
@@ -169,23 +165,8 @@ function Post({ posts }) {
           <Modal.Title>Editar Post</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="form-group">
-            <label>Título</label>
-            <input
-              type="text"
-              className="form-control"
-              value={editPostData.title}
-              onChange={(e) => setEditPostData({ ...editPostData, title: e.target.value })}
-            />
-          </div>
-          <div className="form-group mt-3">
-            <label>Conteúdo</label>
-            <textarea
-              className="form-control"
-              value={editPostData.content}
-              onChange={(e) => setEditPostData({ ...editPostData, content: e.target.value })}
-            />
-          </div>
+          <input type="text" className="form-control mb-2" value={editPostData.title} onChange={(e) => setEditPostData({ ...editPostData, title: e.target.value })} placeholder="Título" />
+          <textarea className="form-control" rows="5" value={editPostData.content} onChange={(e) => setEditPostData({ ...editPostData, content: e.target.value })} placeholder="Conteúdo"></textarea>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setEditModalVisible(false)}>Cancelar</Button>
@@ -195,17 +176,20 @@ function Post({ posts }) {
 
       <Modal show={showLikeModal} onHide={() => setShowLikeModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Likes</Modal.Title>
+          <Modal.Title>Curtidas</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {likeDetails.length > 0 ? (
-            <ul>
+            <ul className="list-group">
               {likeDetails.map((like, index) => (
-                <li key={index}>{like.userName} - {like.likedAt}</li>
+                <li key={index} className="list-group-item">
+                  <strong>{like.userName}</strong>
+                  <small className="d-block text-muted">Curtido em {new Date(like.likedAt).toLocaleString()}</small>
+                </li>
               ))}
             </ul>
           ) : (
-            <p>Não há likes para este post.</p>
+            <p>Nenhuma curtida encontrada.</p>
           )}
         </Modal.Body>
         <Modal.Footer>

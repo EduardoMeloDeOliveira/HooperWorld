@@ -15,9 +15,15 @@ function Feed() {
     const loadPosts = async () => {
       try {
         const topPosts = await fetchTopTenPosts(token);
-        setPosts(topPosts);
+        
+        if (Array.isArray(topPosts)) {
+          setPosts(topPosts);
+        } else {
+          setPosts([]); 
+        }
       } catch (error) {
         console.error('Erro ao carregar os posts:', error);
+        setPosts([]); 
       }
     };
 
@@ -36,7 +42,12 @@ function Feed() {
         setTitle('');
         setContent('');
         const updatedPosts = await fetchTopTenPosts(token);
-        setPosts(updatedPosts);
+
+        if (Array.isArray(updatedPosts)) {
+          setPosts(updatedPosts);
+        } else {
+          setPosts([]); 
+        }
       } catch (error) {
         setError('Erro ao criar o post. Tente novamente.');
       }
@@ -107,7 +118,13 @@ function Feed() {
         }}
       >
         <div className="w-100">
-          <Post posts={posts} />
+          {posts.length === 0 ? (
+            <div className="alert alert-light text-center" style={{ fontSize: '1.2rem' }}>
+              Nenhum post encontrado, crie o seu primeiro post agora!
+            </div>
+          ) : (
+            <Post posts={posts} />
+          )}
         </div>
       </div>
     </div>

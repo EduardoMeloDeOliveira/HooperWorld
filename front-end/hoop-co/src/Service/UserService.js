@@ -80,23 +80,14 @@ async function updatePost(token, postId, postData) {
 }
 
 
-async function likePost(token, postId) {
-  const response = await axios.post(`${API_BASE_URL}/likes/${postId}`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+async function toggleLike(token, postId) {
+  const response = await axios.post(`${API_BASE_URL}/likes/${postId}`, null, {
+    headers: { Authorization: `Bearer ${token}` },
   });
   return response.data;
 }
 
-async function unlikePost(token, postId) {
-  const response = await axios.delete(`${API_BASE_URL}/likes/${postId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-}
+
 
 export {
   registerUser,
@@ -108,6 +99,5 @@ export {
   fetchTopTenPosts,
   deletePost,
   updatePost,
-  likePost,
-  unlikePost
+  toggleLike
 };
