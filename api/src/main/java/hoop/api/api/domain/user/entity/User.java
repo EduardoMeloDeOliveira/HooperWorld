@@ -33,6 +33,9 @@ public class User implements UserDetails {
 
     private String password;
 
+    private String imageUrl;
+
+
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Post> posts;
 
@@ -41,6 +44,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private  List<Comment> comments;
+
 
     @Enumerated(EnumType.STRING)
     private Roles role;

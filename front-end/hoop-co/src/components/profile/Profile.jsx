@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUserProfile, fetchPostsByUserId } from '../../Service/UserService';
+import { fetchUserProfile, fetchPostsByUserId, uploadUserProfileImage } from '../../Service/UserService';
 import Post from '../post/Post';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -9,11 +9,12 @@ function Profile() {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem('token');
+  
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     if (token) {
       fetchUserProfile(token)
         .then((data) => setUser(data))
@@ -24,10 +25,8 @@ function Profile() {
 
       fetchPostsByUserId(token)
         .then((data) => {
-          console.log('Posts recebidos:', data);
-
-          // Verifica se os dados são válidos e um array
           if (Array.isArray(data)) {
+            console.log(data)
             const storedLikes = getLikesFromLocalStorage();
             const postsWithLikes = data.map(post => ({
               ...post,
@@ -36,7 +35,7 @@ function Profile() {
             }));
             setPosts(postsWithLikes);
           } else {
-            setPosts([]); // Nenhum post, então define posts como vazio
+            setPosts([]); 
           }
         })
         .catch((err) => {
@@ -46,7 +45,7 @@ function Profile() {
     } else {
       setError('Token de autenticação não encontrado.');
     }
-  }, []);
+  }, [token]);
 
   const getLikesFromLocalStorage = () => {
     return JSON.parse(localStorage.getItem('likes')) || {};
@@ -61,7 +60,6 @@ function Profile() {
     }
     localStorage.setItem('likes', JSON.stringify(newLikes));
 
-    // Atualiza o estado dos posts com o novo estado de like
     const updatedPostsWithNewLike = posts.map(post =>
       post.postId === postId
         ? { ...post, likedByUser: newLikes[postId].liked, likeId: newLikes[postId].likeId }
@@ -76,6 +74,29 @@ function Profile() {
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  const handleImageChange = (e) => {
+    setSelectedImage(e.target.files[0]);
+  };
+
+  const handleImageUpload = () => {
+    if (selectedImage) {
+      const formData = new FormData();
+      formData.append('file', selectedImage);
+      uploadUserProfileImage(formData, token)
+        .then(() => {
+          alert('Imagem de perfil atualizada com sucesso!');
+          setSelectedImage(null);
+          fetchUserProfile(token).then((data) => setUser(data));
+        })
+        .catch((err) => {
+          console.error('Erro ao enviar a imagem:', err);
+          alert('Erro ao enviar a imagem.');
+        });
+    } else {
+      alert('Por favor, selecione uma imagem primeiro.');
+    }
   };
 
   return (
@@ -106,6 +127,8 @@ function Profile() {
                 <>
                   <p><strong>Nome:</strong> {user.name}</p>
                   <p><strong>E-mail:</strong> {user.email}</p>
+                  <input type="file" onChange={handleImageChange} />
+                  <Button onClick={handleImageUpload} variant="primary" className="mt-2">Enviar Imagem</Button>
                 </>
               ) : (
                 <p>Carregando perfil...</p>

@@ -12,6 +12,11 @@ import hoop.api.api.handler.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class UserService {
@@ -58,6 +63,29 @@ public class UserService {
     public Long userId (Long userId){
         User user = existsUserById(userId);
         return user.getId();
+    }
+
+
+    public String uploadUserImage(Long userId, MultipartFile file) {
+        User user = existsUserById(userId);
+        String imagePath = saveImage(file);
+        String imageUrl = "/users/" + userId + "/image";
+        user.setImageUrl(imageUrl);
+        userRepository.save(user);
+        return imageUrl;
+    }
+
+    private String saveImage(MultipartFile file) {
+        try {
+            String directory = "uploads/images/";
+            Files.createDirectories(Paths.get(directory));
+            String filePath = directory + file.getOriginalFilename();
+            Path path = Paths.get(filePath);
+            Files.write(path, file.getBytes());
+            return filePath;
+        } catch (Exception e) {
+            throw new RuntimeException("Falha ao salvar a imagem", e);
+        }
     }
 
 

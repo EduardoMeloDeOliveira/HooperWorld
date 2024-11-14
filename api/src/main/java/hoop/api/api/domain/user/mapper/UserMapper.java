@@ -22,6 +22,7 @@ public class UserMapper {
         return UserResponseDTO.builder()
                 .userId(user.getId())
                 .name(user.getName())
+                .imageUrl(user.getImageUrl())
                 .email(user.getEmail())
                 .build();
     }

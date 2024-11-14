@@ -6,6 +6,7 @@ import lombok.Builder;
 public record UserResponseDTO (
         Long userId,
         String name,
-        String email
+        String email,
+        String imageUrl
 ){
 }

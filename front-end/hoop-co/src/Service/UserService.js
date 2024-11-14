@@ -87,7 +87,39 @@ async function toggleLike(token, postId) {
   return response.data;
 }
 
+const uploadUserProfileImage = async (formData, token) => {
+  console.log(token)
+  const response = await axios.post(`${API_BASE_URL}/users/upload-image`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
 
+
+const getUserImage = async (token) => {
+  try {
+    const response = await axios.get(`${API_URL}/users/image`, {
+      headers: {
+        'Authorization': token, 
+      },
+      responseType: 'blob',
+    });
+    
+    if (response.status === 200) {
+      const imageUrl = URL.createObjectURL(response.data); 
+      return imageUrl;
+    } else {
+      console.error('Erro ao obter a imagem do usuário');
+      return null;
+    }
+  } catch (error) {
+    console.error('Erro na requisição para obter a imagem:', error);
+    return null;
+  }
+};
 
 export {
   registerUser,
@@ -99,5 +131,7 @@ export {
   fetchTopTenPosts,
   deletePost,
   updatePost,
-  toggleLike
+  toggleLike,
+  uploadUserProfileImage,
+  getUserImage
 };

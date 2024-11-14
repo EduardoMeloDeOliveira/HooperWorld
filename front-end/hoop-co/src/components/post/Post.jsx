@@ -9,9 +9,9 @@ import Button from 'react-bootstrap/Button';
 function Post({ posts }) {
   const [updatedPosts, setUpdatedPosts] = useState([]);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
   const [editPostData, setEditPostData] = useState({ title: '', content: '' });
-  const [currentPostId, setCurrentPostId] = useState(null);
-  const [showLikeModal, setShowLikeModal] = useState(false);
+  const [viewPostData, setViewPostData] = useState(null);
   const [likeDetails, setLikeDetails] = useState([]);
 
   const userId = localStorage.getItem("userId");
@@ -19,23 +19,11 @@ function Post({ posts }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const getLikesFromLocalStorage = () => JSON.parse(localStorage.getItem("userLikes")) || {};
-
-  const saveLikesToLocalStorage = (likes) => {
-    localStorage.setItem("userLikes", JSON.stringify(likes));
-  };
+  const pageTitle = location.pathname === '/profile' ? 'Meus Posts' : 'Timeline';
 
   useEffect(() => {
-    const storedLikes = getLikesFromLocalStorage();
-    const updatedPostsWithLikes = posts.map(post => ({
-      ...post,
-      likedByUser: storedLikes[post.postId]?.liked || false,
-      likeId: storedLikes[post.postId]?.likeId || null,
-    }));
-    setUpdatedPosts(updatedPostsWithLikes);
+    setUpdatedPosts(posts);
   }, [posts]);
-
-  const pageTitle = location.pathname === '/profile' ? 'Meus Posts' : 'Timeline';
 
   const handleEdit = (post) => {
     setCurrentPostId(post.postId);
@@ -48,7 +36,6 @@ function Post({ posts }) {
       await deletePost(token, postId);
       setUpdatedPosts(updatedPosts.filter(post => post.postId !== postId));
       toast.success('Post deletado com sucesso!');
-      navigate(0);  
     } catch (error) {
       console.error('Erro ao deletar o post:', error);
       toast.error('Erro ao deletar o post!');
@@ -57,40 +44,43 @@ function Post({ posts }) {
 
   const handleLikeToggle = async (postId) => {
     try {
-      const likeResponse = await toggleLike(token, postId);
-      const updatedLikeStatus = { liked: likeResponse.liked, likeId: likeResponse.likeId };
-
-      const storedLikes = getLikesFromLocalStorage();
-      storedLikes[postId] = updatedLikeStatus;
-      saveLikesToLocalStorage(storedLikes);
-
-      setUpdatedPosts(prevPosts =>
-        prevPosts.map(post =>
-          post.postId === postId
-            ? {
+      // Fazendo a chamada para o backend para curtir/descurtir
+      const updatedPost = await toggleLike(token, postId);
+      
+      if (updatedPost) {
+        // Verificando se os likes existem e são um array
+        const likes = updatedPost.likes || [];
+  
+        // Atualizando o estado do post após curtir/descurtir
+        setUpdatedPosts((prevPosts) =>
+          prevPosts.map((post) => {
+            if (post.postId === postId) {
+              const isLiked = likes.some((like) => like.likedBy === userId);
+              // Se o post foi curtido, atualizar a contagem corretamente
+              return {
                 ...post,
-                likedByUser: updatedLikeStatus.liked,
-                likeId: updatedLikeStatus.likeId,
-                likes: updatedLikeStatus.liked
-                  ? [...post.likes, { likedBy: userId, likedAt: new Date().toISOString() }]
-                  : post.likes.filter(like => like.likedBy !== userId)
-              }
-            : post
-        )
-      );
+                likes,
+                likeCount: isLiked ? likes.length : likes.length - 1, // Mantém a contagem correta de likes
+              };
+            }
+            return post;
+          })
+        );
+      }
     } catch (error) {
       console.error('Erro ao curtir/descurtir o post:', error);
       toast.error('Erro ao curtir/descurtir o post!');
     }
   };
+  
+  
+  
 
   const handleEditSave = async () => {
     try {
       const updatedPost = await updatePost(token, currentPostId, editPostData);
-      setUpdatedPosts((prevPosts) => 
-        prevPosts.map((post) => 
-          post.postId === currentPostId ? updatedPost : post
-        )
+      setUpdatedPosts(prevPosts => 
+        prevPosts.map(post => post.postId === currentPostId ? updatedPost : post)
       );
       toast.success('Post atualizado com sucesso!');
       setEditModalVisible(false);
@@ -100,13 +90,10 @@ function Post({ posts }) {
     }
   };
 
-  const handleShowLikes = (likes) => {
-    const likeDetailsFormatted = likes.map(like => ({
-      userName: like.likedBy,
-      likedAt: like.likedAt
-    }));
-    setLikeDetails(likeDetailsFormatted);
-    setShowLikeModal(true);
+  const handleViewPost = (post) => {
+    setViewPostData(post);
+    setLikeDetails(post.likes);
+    setViewModalVisible(true);
   };
 
   return (
@@ -147,10 +134,10 @@ function Post({ posts }) {
                       className={`btn btn-sm ${post.likedByUser ? 'btn-primary' : 'btn-outline-primary'}`}
                       onClick={() => handleLikeToggle(post.postId)}
                     >
-                      <FaThumbsUp /> {post.likes.length}
+                      <FaThumbsUp /> {post.likedByUser ? 'Descurtir' : 'Curtir'} ({post.likes.length})
                     </button>
-                    <button className="btn btn-sm btn-outline-info" onClick={() => handleShowLikes(post.likes)}>
-                      Ver Curtidas
+                    <button className="btn btn-sm btn-info" onClick={() => handleViewPost(post)}>
+                      Ver Detalhes
                     </button>
                   </div>
                 </div>
@@ -174,26 +161,33 @@ function Post({ posts }) {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showLikeModal} onHide={() => setShowLikeModal(false)}>
+      <Modal show={viewModalVisible} onHide={() => setViewModalVisible(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Curtidas</Modal.Title>
+          <Modal.Title>{viewPostData ? viewPostData.title : ''}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {likeDetails.length > 0 ? (
-            <ul className="list-group">
-              {likeDetails.map((like, index) => (
-                <li key={index} className="list-group-item">
-                  <strong>{like.userName}</strong>
-                  <small className="d-block text-muted">Curtido em {new Date(like.likedAt).toLocaleString()}</small>
-                </li>
-              ))}
-            </ul>
+          {viewPostData ? (
+            <>
+              <h6>Curtido por:</h6>
+              {likeDetails.length > 0 ? (
+                <ul className="list-group">
+                  {likeDetails.map((like, index) => (
+                    <li key={index} className="list-group-item">
+                      <strong>{like.likedBy}</strong>
+                      <small className="d-block text-muted">Curtido em {new Date(like.likedAt).toLocaleString()}</small>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Nenhuma curtida encontrada.</p>
+              )}
+            </>
           ) : (
-            <p>Nenhuma curtida encontrada.</p>
+            <p>Carregando...</p>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowLikeModal(false)}>Fechar</Button>
+          <Button variant="secondary" onClick={() => setViewModalVisible(false)}>Fechar</Button>
         </Modal.Footer>
       </Modal>
     </div>
