@@ -5,8 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record PostRequestDTO(
-        @NotBlank
-        String title,
+
 
         @NotBlank
         String content

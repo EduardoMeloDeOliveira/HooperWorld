@@ -16,7 +16,6 @@ public class PostMapper {
         return Post.builder()
                 .id(null)
                 .createdAt(LocalDateTime.now())
-                .title(requestDTO.title())
                 .content(requestDTO.content())
                 .build();
     }
@@ -26,7 +25,6 @@ public class PostMapper {
                 .postId(post.getId())
                 .createdAt(post.getCreatedAt())
                 .user(UserMapper.toDto(post.getUser()))
-                .title(post.getTitle())
                 .content(post.getContent())
                 .likes(post.getLikes().stream().map(p -> LikeMapper.toDto(p)).collect(Collectors.toList()))
                 .comments(post.getComments().stream().map(c -> CommentMapper.toDTO(c)).collect(Collectors.toList()))

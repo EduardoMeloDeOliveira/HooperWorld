@@ -67,8 +67,8 @@ function SideBar() {
 
         <div className="contents-item">
           <button className="action-btn" style={{backgroundColor:"red"}}>
-            <BiLogOut className="action-icon"  style={{color : "white", fontSize: "30px"}}/>
-            <span style={{color : "white" , fontWeight:"bold", fontSize:"20px"}}>Logout</span>
+            <BiLogOut className="action-icon"  style={{color : "white"}}/>
+            <span style={{color : "white" , fontWeight:"bold"}}>Logout</span>
           </button>
         </div>
 
