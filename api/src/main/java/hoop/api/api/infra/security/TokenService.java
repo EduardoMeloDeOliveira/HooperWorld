@@ -27,6 +27,7 @@ public class TokenService {
                     .withSubject(user.getEmail())
                     .withExpiresAt(expiresAt())
                     .withClaim("userId", user.getId())
+                    .withClaim("role", user.getRole().name())
                     .sign(algorithm);
         } catch (JWTCreationException ex) {
             throw new RuntimeException("JWT generation failed");
@@ -39,8 +40,8 @@ public class TokenService {
 
         try {
 
-            if(token.startsWith("Bearer ")){
-                token = token.replace("Bearer ","");
+            if (token.startsWith("Bearer ")) {
+                token = token.replace("Bearer ", "");
             }
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -52,7 +53,7 @@ public class TokenService {
                     .getClaim("userId")
                     .asLong();
 
-        }catch (JWTVerificationException ex){
+        } catch (JWTVerificationException ex) {
             throw new RuntimeException("JWT verification failed userid" + ex.getMessage());
         }
     }
@@ -71,8 +72,19 @@ public class TokenService {
         } catch (JWTVerificationException ex) {
             throw new RuntimeException("JWT verification failed");
         }
+    }
 
-
+    public String getUserRole(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
+                    .build()
+                    .verify(token)
+                    .getClaim("role")
+                    .asString();
+        } catch (JWTVerificationException ex) {
+            throw new RuntimeException("JWT verification failed");
+        }
     }
 
     private Instant expiresAt() {

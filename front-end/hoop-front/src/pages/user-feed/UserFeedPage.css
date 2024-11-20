@@ -1,0 +1,16 @@
+.user-feed-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+
+  
+  .feed {
+    flex: 1;
+    background-color: #effaff;
+    height: 100vh;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+  }
+  

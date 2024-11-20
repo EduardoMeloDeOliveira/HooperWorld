@@ -37,7 +37,7 @@ public class SecurityConfig {
                     req.requestMatchers("/auth/login", "auth/register").permitAll();
                     req.requestMatchers("/admin/**").hasRole("ADMIN");
                     req.requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll();
-                    req.anyRequest().authenticated();
+                    req.anyRequest().hasRole("USER");
                 }).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
