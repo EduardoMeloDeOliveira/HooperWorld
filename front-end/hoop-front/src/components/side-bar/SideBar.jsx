@@ -29,6 +29,14 @@ function SideBar() {
           </div>
         </div>
 
+
+        <div className="contents-item">
+          <button className="action-btn">
+            <IoIosPhotos className="action-icon" />
+            <span>Feed</span>
+          </button>
+        </div>
+
         <div className="contents-item">
           <button className="action-btn">
             <FaUserCircle className="action-icon" />
@@ -36,14 +44,7 @@ function SideBar() {
           </button>
         </div>
 
-        <div className="contents-item">
-          <button className="action-btn">
-            <IoIosPhotos className="action-icon" />
-            <span>Posts</span>
-          </button>
-        </div>
-
-
+      
         <div className="contents-item">
           <button className="action-btn">
             <IoSettingsSharp className="action-icon" />
